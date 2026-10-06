@@ -12,7 +12,7 @@ jobs:
   sync_latest_from_upstream:
     name: Sync latest commits from upstream
     runs-on: ubuntu-latest
-    if: github.repository == 'city10666/iptv-sources' # ⚠️记得改成你的仓库路径，例如：zhangsan/iptv-sources
+    if: github.repository == 'city10666/iptv-sources' # 根据你的日志，这里已经帮你改好了
 
     steps:
       - name: Checkout target repo
@@ -20,12 +20,10 @@ jobs:
 
       - name: Sync upstream changes
         id: sync
-        uses: aormsby/Fork-Sync-Action@v3.4
+        uses: aormsby/fork-sync-action@v3.4 # 💡 这里已经修正为全小写
         with:
           upstream_repository: best-fan/iptv-sources
-          upstream_branch: main # 原仓库的主分支是 main
-          target_branch: main   # 你的主分支名
+          upstream_branch: main
+          target_branch: main
           target_token: ${{ secrets.GITHUB_TOKEN }}
-          
-          # 如果同步时有冲突，选择用上游覆盖你的仓库（推荐，因为你只是想获取最新直播源）
           upstream_pull_args: '-s recursive -X theirs'
