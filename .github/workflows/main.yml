@@ -1,0 +1,31 @@
+name: Upstream Sync
+
+permissions:
+  contents: write
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 每天北京时间早上 8:00 自动执行 (UTC 0:00)
+  workflow_dispatch: # 允许你在页面上手动点击运行
+
+jobs:
+  sync_latest_from_upstream:
+    name: Sync latest commits from upstream
+    runs-on: ubuntu-latest
+    if: github.repository == 'city10666/iptv-sources' # ⚠️记得改成你的仓库路径，例如：zhangsan/iptv-sources
+
+    steps:
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+
+      - name: Sync upstream changes
+        id: sync
+        uses: aormsby/Fork-Sync-Action@v3.4
+        with:
+          upstream_repository: best-fan/iptv-sources
+          upstream_branch: main # 原仓库的主分支是 main
+          target_branch: main   # 你的主分支名
+          target_token: ${{ secrets.GITHUB_TOKEN }}
+          
+          # 如果同步时有冲突，选择用上游覆盖你的仓库（推荐，因为你只是想获取最新直播源）
+          upstream_pull_args: '-s recursive -X theirs'
